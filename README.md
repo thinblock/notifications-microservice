@@ -32,6 +32,7 @@ String that have the following keys:
 - jobId (required)
 - event (what kind of event to notify the end user: required)
 - data (data to be sent along with event: optional)
+
 creates a background task to notify the end client app. It basically gets the type of notification from the Jobs DB and acts upon it.
 
 ## File Structure
