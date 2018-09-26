@@ -13,10 +13,10 @@ export default class WebhooksListener implements IController {
     try {
       console.log(req.body);
       const notification: ISNSEvent = JSON.parse(req.body);
-      // const [er, result] = <[Error, string]> await to(validateAndConfirmMessage(notification));
-      // if (er || result !== 'success') {
-      //   return res.send(er || result);
-      // }
+      const [er, result] = <[Error, string]> await to(validateAndConfirmMessage(notification));
+      if (er || result !== 'success') {
+        return res.send(er || result);
+      }
       let parsedData: any = {};
       try {
         parsedData = JSON.parse(notification.Message);
