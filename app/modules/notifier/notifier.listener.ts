@@ -37,7 +37,8 @@ export default class WebhooksListener implements IController {
         timestamp: notification.Timestamp,
         notification: jobData.notification,
         data: parsedData.data,
-        event: parsedData.event
+        event: parsedData.event,
+        _id: jobId
       });
       req.log.info('[i] Created job with ID: ', enqueuedJob.id);
       return res.send({ success: true, job_id: enqueuedJob.id });
