@@ -40,7 +40,11 @@ async function processJob(jobData: any) {
         [i] Trying to POST ${notificationResource} with EVENT: ${event}
         on Timestamp: ${timestamp} for Job: ${jobData._id}
       `);
-      const res = await post(notificationResource + (token ? ('?token=' + token) : '')).send(data);
+      const res = await post(
+        notificationResource + (token ? ('?token=' + token) : '')
+      ).send({
+        timestamp, event, data
+      });
       logger.info(oneLine`
         [i] POSTED event: ${event} to ${notificationResource} was successfull
         for Job: ${jobData._id}
