@@ -15,8 +15,7 @@ const config: EnvConfig = {
   port: 8080,
   db: process.env.TB_NOTIFICATION_MS_REDIS_DB_STRING,
   aws_region: process.env.TB_AWS_REGION || 'ap-southeast-1',
-  sendgrid_key: process.env.SENDGRID_KEY ||
-    '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'
+  sendgrid_key: process.env.SENDGRID_KEY
 };
 
 const services = {
@@ -26,9 +25,9 @@ const services = {
 };
 
 const twilio: TwilioConfig = {
-  sid: 'AC24a1e734285a8c2ca2c1efc8ed86cdbc',
-  number: '+19312402005',
-  token: '7c6020c389cb0e917ace37445767ffff'
+  sid: process.env.TWILIO_SID,
+  number: process.env.TWILIO_NUMBER,
+  token: process.env.TWILIO_TOKEN
 };
 
 // settings for test environment
