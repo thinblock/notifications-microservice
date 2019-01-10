@@ -83,11 +83,18 @@ async function processJob(jobData: any) {
         text: data,
         html: `<strong>${data}</strong>`,
       };
-      sgMail.send(msg);
-      logger.info(oneLine`
-        [i] EMAIL event: ${event} to ${notificationResource} was successful
-        for Job: ${jobData._id}
-      `);
+      const [err, resp] = await to(sgMail.send(msg));
+      if (err) {
+        logger.info(oneLine`
+          [i] EMAIL event: ${event} to ${notificationResource} was unsuccessful
+          for Job: ${jobData._id}
+        `);
+      } else {
+        logger.info(oneLine`
+          [i] EMAIL event: ${event} to ${notificationResource} was successful
+          for Job: ${jobData._id}
+        `);
+      }
     }
   } catch (e) {
     logger.info(oneLine`
