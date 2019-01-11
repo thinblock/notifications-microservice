@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { EnvConfig } from '../app/interfaces/utils/IConfigSettings';
+import { EnvConfig, TwilioConfig } from '../app/interfaces/utils/IConfigSettings';
 
 const env: string = process.env.NODE_ENV || 'development';
 const debug: boolean = !!process.env.DEBUG || false;
@@ -14,7 +14,8 @@ const config: EnvConfig = {
   root: path.join(__dirname, '/..'),
   port: 8080,
   db: process.env.TB_NOTIFICATION_MS_REDIS_DB_STRING,
-  aws_region: process.env.TB_AWS_REGION || 'ap-southeast-1'
+  aws_region: process.env.TB_AWS_REGION || 'ap-southeast-1',
+  sendgrid_key: process.env.SENDGRID_KEY
 };
 
 const services = {
@@ -23,6 +24,11 @@ const services = {
   }
 };
 
+const twilio: TwilioConfig = {
+  sid: process.env.TWILIO_SID,
+  number: process.env.TWILIO_NUMBER,
+  token: process.env.TWILIO_TOKEN
+};
 
 // settings for test environment
 if (env === 'production') {
@@ -30,4 +36,4 @@ if (env === 'production') {
   config.debug = false;
 }
 
-export { config, services };
+export { config, services, twilio };

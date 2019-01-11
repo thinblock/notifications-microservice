@@ -2,8 +2,11 @@ import { createQueue, Job } from 'kue';
 import { post } from 'superagent';
 import { logger } from '../utils/logger';
 import { publishMessage } from '../utils/helpers';
-import { config } from './env';
+import { config, twilio } from './env';
 import { oneLine } from 'common-tags';
+import to from 'await-to-js';
+import * as Twilio from 'twilio';
+const sgMail = require('@sendgrid/mail');
 
 const queue = createQueue({ redis: config.db });
 
@@ -46,9 +49,59 @@ async function processJob(jobData: any) {
         timestamp, event, data, job_id: jobData._id
       });
       logger.info(oneLine`
-        [i] POSTED event: ${event} to ${notificationResource} was successfull
+        [i] POSTED event: ${event} to ${notificationResource} was successful
         for Job: ${jobData._id}
       `);
+    } else if (type === 'SMS') {
+      logger.info(oneLine`
+        [i] Trying to SMS ${notificationResource} with EVENT: ${event}
+        on Timestamp: ${timestamp} for Job: ${jobData._id}
+      `);
+      const accountSid = twilio.sid;
+      const authToken = twilio.token;
+      const fromPhoneNumber = twilio.number;
+      const client = Twilio(accountSid, authToken);
+      const [err, success] = await to (client.messages.create({
+        body: event,
+        to: notificationResource,
+        from: fromPhoneNumber
+      }));
+      if (err) {
+        logger.info(oneLine`
+          [i] SMS event: ${event} to ${notificationResource} was unsuccessful
+          for Job: ${jobData._id}
+        `);
+      } else {
+        logger.info(oneLine`
+          [i] SMS event: ${event} to ${notificationResource} was successful
+          for Job: ${jobData._id}
+        `);
+      }
+    } else if (type === 'EMAIL') {
+      logger.info(oneLine`
+        [i] Trying to EMAIL ${notificationResource} with EVENT: ${event}
+        on Timestamp: ${timestamp} for Job: ${jobData._id}
+      `);
+      sgMail.setApiKey(config.sendgrid_key);
+      const msg = {
+        to: notificationResource,
+        from: 'noreply@thinblock.io',
+        subject: `Notification for ${event}`,
+        text: data,
+        html: `<strong>${data}</strong>`,
+      };
+      const [err, resp] = await to(sgMail.send(msg));
+      if (err) {
+        logger.info(oneLine`
+          [i] EMAIL event: ${event} to ${notificationResource} was unsuccessful
+          for Job: ${jobData._id}
+        `);
+      } else {
+        logger.info(oneLine`
+          [i] EMAIL event: ${event} to ${notificationResource} was successful
+          for Job: ${jobData._id}
+        `);
+      }
     }
   } catch (e) {
     logger.info(oneLine`

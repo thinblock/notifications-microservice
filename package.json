@@ -11,6 +11,8 @@
     "node": "8.11.2"
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
+    "@types/twilio": "0.0.9",
     "add": "^2.0.6",
     "async": "^2.6.1",
     "await-to-js": "^2.0.1",
@@ -32,6 +34,7 @@
     "sequelize": "^4.38.0",
     "sns-validator": "^0.3.4",
     "superagent": "^3.8.3",
+    "twilio": "^3.19.1",
     "yarn": "^1.9.4"
   },
   "devDependencies": {
