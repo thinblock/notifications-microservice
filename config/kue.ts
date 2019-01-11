@@ -66,10 +66,17 @@ async function processJob(jobData: any) {
         to: notificationResource,
         from: fromPhoneNumber
       }));
-      logger.info(oneLine`
-        [i] SMS event: ${event} to ${notificationResource} was successful
-        for Job: ${jobData._id}
-      `);
+      if (err) {
+        logger.info(oneLine`
+          [i] SMS event: ${event} to ${notificationResource} was unsuccessful
+          for Job: ${jobData._id}
+        `);
+      } else {
+        logger.info(oneLine`
+          [i] SMS event: ${event} to ${notificationResource} was successful
+          for Job: ${jobData._id}
+        `);
+      }
     } else if (type === 'EMAIL') {
       logger.info(oneLine`
         [i] Trying to EMAIL ${notificationResource} with EVENT: ${event}
